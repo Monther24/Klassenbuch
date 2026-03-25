@@ -9,110 +9,92 @@
 <meta name="theme-color" content="#f5f4f1">
 <title>Klassenbuch</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --ink:#0f0f0f;
-  --ink2:#5a5a5a;
-  --ink3:#a0a0a0;
-  --surface:#ffffff;
-  --surface2:#f5f4f1;
-  --surface3:#eeede9;
-  --border:#e0deda;
-  --radius:14px;
-  --shadow:0 2px 12px rgba(0,0,0,0.07);
-  --safe-top: env(safe-area-inset-top);
-  --safe-bottom: env(safe-area-inset-bottom);
+  --ink:#0f0f0f;--ink2:#5a5a5a;--ink3:#a0a0a0;
+  --surface:#ffffff;--surface2:#f5f4f1;--surface3:#eeede9;
+  --border:#e0deda;--radius:14px;
+  --safe-top:env(safe-area-inset-top);--safe-bottom:env(safe-area-inset-bottom);
 }
-body{
-  background:var(--surface2);
-  font-family:'DM Sans',sans-serif;
-  color:var(--ink);
-  min-height:100vh;
-  min-height:100dvh;
-  -webkit-tap-highlight-color:transparent;
-}
-#app{
-  max-width:480px;
-  margin:0 auto;
-  padding: calc(1.5rem + var(--safe-top)) 1rem calc(4rem + var(--safe-bottom));
-}
-
+body{background:var(--surface2);font-family:'DM Sans',sans-serif;color:var(--ink);min-height:100dvh;-webkit-tap-highlight-color:transparent}
+#app{max-width:480px;margin:0 auto;padding:calc(1.5rem + var(--safe-top)) 1rem calc(5rem + var(--safe-bottom))}
 .app-header{margin-bottom:1.5rem}
-.app-title{font-size:28px;font-weight:600;letter-spacing:-0.5px;color:var(--ink)}
+.app-title{font-size:28px;font-weight:600;letter-spacing:-0.5px}
 .app-sub{font-size:13px;color:var(--ink3);margin-top:3px}
-
-.search-wrap{position:relative;margin-bottom:1.25rem}
+.search-wrap{position:relative;margin-bottom:1rem}
 .search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--ink3);font-size:16px;pointer-events:none}
-.search-bar{width:100%;padding:12px 12px 12px 38px;border:1.5px solid var(--border);border-radius:12px;font-size:15px;font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink);outline:none;-webkit-appearance:none;transition:border-color .15s}
-.search-bar:focus{border-color:#b0a898}
+.search-bar{width:100%;padding:12px 12px 12px 38px;border:1.5px solid var(--border);border-radius:12px;font-size:15px;font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink);outline:none;-webkit-appearance:none}
 .search-bar::placeholder{color:var(--ink3)}
-
-.action-bar{display:flex;gap:8px;margin-bottom:1.5rem}
-.btn-pill{display:flex;align-items:center;gap:6px;padding:10px 18px;border-radius:100px;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s;border:none;-webkit-appearance:none}
-.btn-pill-outline{background:var(--surface);border:1.5px solid var(--border);color:var(--ink2)}
-.btn-pill-outline:active{background:var(--surface3)}
-.btn-pill-solid{background:var(--ink);color:#fff}
-.btn-pill-solid:active{background:#2a2a2a}
-
+.action-bar{display:flex;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap}
+.btn-pill{display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:100px;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;-webkit-appearance:none;white-space:nowrap}
+.btn-outline{background:var(--surface);border:1.5px solid var(--border);color:var(--ink2)}
+.btn-solid{background:var(--ink);color:#fff}
+.btn-import{background:#e8f5e9;border:1.5px solid #a5d6a7;color:#2e7d32}
 .class-card{background:var(--surface);border-radius:var(--radius);border:1.5px solid var(--border);margin-bottom:12px;overflow:hidden}
 .class-head{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;user-select:none;-webkit-user-select:none}
-.class-head:active{background:var(--surface2)}
 .class-color-bar{width:4px;height:38px;border-radius:4px;flex-shrink:0}
 .class-head-info{flex:1}
 .class-name{font-size:16px;font-weight:600;letter-spacing:-0.2px}
 .class-meta{font-size:12px;color:var(--ink3);margin-top:2px}
 .class-head-actions{display:flex;align-items:center;gap:4px}
 .icon-btn{width:32px;height:32px;border-radius:8px;border:none;background:transparent;color:var(--ink3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;font-family:'DM Sans',sans-serif;-webkit-appearance:none}
-.icon-btn:active{background:var(--surface3);color:var(--ink)}
-.icon-btn.danger:active{background:#fff0f0;color:#d94040}
 .chevron{font-size:11px;color:var(--ink3);margin-left:4px;transition:transform .2s;display:inline-block}
 .chevron.open{transform:rotate(90deg)}
-
 .contacts-body{border-top:1.5px solid var(--border);padding:6px 8px 8px}
 .contact-row{display:flex;align-items:center;gap:10px;padding:10px 8px;border-radius:10px;cursor:pointer}
-.contact-row:active{background:var(--surface2)}
 .avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;letter-spacing:0.5px}
 .contact-text{flex:1;min-width:0}
 .c-name{font-size:14px;font-weight:500;color:var(--ink)}
 .c-num{font-size:12px;color:var(--ink3);font-family:'DM Mono',monospace;margin-top:2px}
 .empty-row{padding:14px 8px;font-size:13px;color:var(--ink3);text-align:center}
-.add-in-class{display:flex;align-items:center;gap:8px;padding:10px 8px;border-radius:10px;cursor:pointer;color:var(--ink3);font-size:13px;font-weight:500;border:1.5px dashed var(--border);margin:4px 0 2px;transition:all .12s}
-.add-in-class:active{color:var(--ink);border-color:#b0a898;background:var(--surface2)}
-
+.add-in-class{display:flex;align-items:center;gap:8px;padding:10px 8px;border-radius:10px;cursor:pointer;color:var(--ink3);font-size:13px;font-weight:500;border:1.5px dashed var(--border);margin:4px 0 2px}
 .empty-state{text-align:center;padding:4rem 1rem;color:var(--ink3)}
 .empty-state .e-icon{font-size:40px;margin-bottom:14px}
 .empty-state p{font-size:14px;line-height:1.7}
-
+.import-preview{margin-top:12px;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;max-height:200px;overflow-y:auto}
+.preview-row{display:flex;border-bottom:1px solid var(--border);font-size:13px}
+.preview-row:last-child{border-bottom:none}
+.preview-row.header{background:var(--surface2);font-weight:500}
+.preview-cell{flex:1;padding:7px 10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink2)}
+.preview-cell:first-child{flex:1.5}
+.import-stats{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.stat-chip{padding:5px 12px;border-radius:100px;font-size:12px;font-weight:500}
+.stat-ok{background:#e8f5e9;color:#2e7d32}
+.stat-warn{background:#fff3e0;color:#e65100}
+.stat-err{background:#ffebee;color:#c62828}
 .modal-overlay{position:fixed;inset:0;background:rgba(15,15,15,0.5);display:flex;align-items:flex-end;justify-content:center;z-index:200}
-.modal-sheet{background:var(--surface);border-radius:22px 22px 0 0;padding:1.5rem 1.25rem calc(1.5rem + var(--safe-bottom));width:100%;max-width:480px;animation:slideUp .22s cubic-bezier(.4,0,.2,1)}
+.modal-sheet{background:var(--surface);border-radius:22px 22px 0 0;padding:1.5rem 1.25rem calc(1.5rem + var(--safe-bottom));width:100%;max-width:480px;animation:slideUp .22s cubic-bezier(.4,0,.2,1);max-height:92dvh;overflow-y:auto}
 .detail-sheet{background:var(--surface);border-radius:22px 22px 0 0;padding:2rem 1.25rem calc(2rem + var(--safe-bottom));width:100%;max-width:480px;animation:slideUp .22s cubic-bezier(.4,0,.2,1)}
 @keyframes slideUp{from{transform:translateY(50px);opacity:0}to{transform:none;opacity:1}}
 .modal-handle{width:36px;height:4px;background:var(--border);border-radius:4px;margin:0 auto 1.25rem}
-.modal-title{font-size:18px;font-weight:600;margin-bottom:1.25rem;letter-spacing:-0.3px}
+.modal-title{font-size:18px;font-weight:600;margin-bottom:4px;letter-spacing:-0.3px}
+.modal-sub{font-size:13px;color:var(--ink3);margin-bottom:1.25rem}
 .field{margin-bottom:12px}
 .field label{display:block;font-size:12px;color:var(--ink2);margin-bottom:5px;font-weight:500}
-.field input,.field select{width:100%;padding:13px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:16px;font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink);outline:none;-webkit-appearance:none;transition:border-color .15s}
-.field input:focus,.field select:focus{border-color:#b0a898}
+.field input,.field select{width:100%;padding:13px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:16px;font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink);outline:none;-webkit-appearance:none}
 .field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a0a0a0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+.file-drop{border:2px dashed var(--border);border-radius:12px;padding:2rem 1rem;text-align:center;cursor:pointer;position:relative}
+.file-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.file-drop .fd-icon{font-size:28px;margin-bottom:8px}
+.file-drop .fd-text{font-size:14px;color:var(--ink2);font-weight:500}
+.file-drop .fd-sub{font-size:12px;color:var(--ink3);margin-top:4px}
 .modal-actions{display:flex;gap:8px;margin-top:1.25rem}
-.btn-full{flex:1;padding:14px;border-radius:12px;font-size:16px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;-webkit-appearance:none;transition:all .15s}
+.btn-full{flex:1;padding:14px;border-radius:12px;font-size:16px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;-webkit-appearance:none}
 .btn-confirm{background:var(--ink);color:#fff}
-.btn-confirm:active{background:#2a2a2a}
 .btn-cancel{background:var(--surface3);color:var(--ink2)}
-.btn-cancel:active{background:var(--border)}
-
+.btn-green{background:#2e7d32;color:#fff}
+.btn-green:disabled{background:#a5d6a7;cursor:not-allowed}
 .detail-avatar-lg{width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;margin:0 auto 12px;letter-spacing:1px}
 .detail-name{text-align:center;font-size:21px;font-weight:600;letter-spacing:-0.3px}
 .detail-num{text-align:center;font-size:14px;color:var(--ink3);font-family:'DM Mono',monospace;margin-top:5px}
 .detail-class-tag{background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:5px 14px;font-size:12px;font-weight:500;color:var(--ink2);margin:10px auto 0;display:table}
 .call-actions{display:flex;gap:10px;margin:1.5rem 0 1.25rem}
-.call-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:15px 10px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;font-size:12px;color:var(--ink2);font-family:'DM Sans',sans-serif;-webkit-appearance:none;transition:all .15s}
-.call-btn:active{background:var(--surface3)}
+.call-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:15px 10px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;font-size:12px;color:var(--ink2);font-family:'DM Sans',sans-serif;-webkit-appearance:none}
 .call-btn .cb-icon{font-size:22px}
 .divider{border:none;border-top:1.5px solid var(--border);margin:.75rem 0}
-.delete-row{width:100%;padding:14px;background:transparent;color:#d94040;border:1.5px solid #f5c5c5;border-radius:12px;font-size:15px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;-webkit-appearance:none;transition:all .15s}
-.delete-row:active{background:#fff5f5}
+.delete-row{width:100%;padding:14px;background:transparent;color:#d94040;border:1.5px solid #f5c5c5;border-radius:12px;font-size:15px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;-webkit-appearance:none}
 </style>
 </head>
 <body>
@@ -126,13 +108,13 @@ body{
     <input class="search-bar" id="searchInput" placeholder="Name oder Nummer suchen..." oninput="render()">
   </div>
   <div class="action-bar">
-    <button class="btn-pill btn-pill-outline" onclick="openAddClass()">+ Neue Klasse</button>
-    <button class="btn-pill btn-pill-solid" onclick="openAddContact(null)">+ Kontakt</button>
+    <button class="btn-pill btn-outline" onclick="openAddClass()">+ Klasse</button>
+    <button class="btn-pill btn-solid" onclick="openAddContact(null)">+ Kontakt</button>
+    <button class="btn-pill btn-import" onclick="openImport()">↑ Excel importieren</button>
   </div>
   <div id="mainContent"></div>
 </div>
 <div id="modalContainer"></div>
-
 <script>
 const PALETTE=[
   {bar:'#4A90D9',bg:'#EBF4FF',text:'#1a4d80'},
@@ -143,29 +125,19 @@ const PALETTE=[
   {bar:'#50C4C4',bg:'#E6FAFA',text:'#1a6666'},
   {bar:'#E06060',bg:'#FDEAEA',text:'#7a1a1a'},
 ];
-
-let state=JSON.parse(localStorage.getItem('kb2')||'null')||{
-  classes:[],
-  open:{},
-  contacts:[]
-};
-
-function save(){localStorage.setItem('kb2',JSON.stringify(state))}
+let state=JSON.parse(localStorage.getItem('kb3')||'null')||{classes:[],open:{},contacts:[]};
+function save(){localStorage.setItem('kb3',JSON.stringify(state))}
 function pal(i){return PALETTE[i%PALETTE.length]}
 function ini(n){return n.split(' ').map(p=>p[0]).join('').toUpperCase().slice(0,2)}
 function closeModal(){document.getElementById('modalContainer').innerHTML=''}
 
 function render(){
   const q=document.getElementById('searchInput').value.toLowerCase().trim();
-  document.getElementById('app-sub').textContent=
-    `${state.classes.length} Klassen · ${state.contacts.length} Kontakte`;
-
+  document.getElementById('app-sub').textContent=`${state.classes.length} Klassen · ${state.contacts.length} Kontakte`;
   if(!state.classes.length){
-    document.getElementById('mainContent').innerHTML=
-      `<div class="empty-state"><div class="e-icon">📚</div><p>Noch keine Klassen vorhanden.<br>Tippe auf <strong>+ Neue Klasse</strong> um loszulegen.</p></div>`;
+    document.getElementById('mainContent').innerHTML=`<div class="empty-state"><div class="e-icon">📚</div><p>Noch keine Klassen.<br>Tippe <strong>+ Klasse</strong> oder importiere eine Excel-Datei.</p></div>`;
     return;
   }
-
   let html='';
   state.classes.forEach((cls,ci)=>{
     const p=pal(ci);
@@ -181,27 +153,20 @@ function render(){
         </div>
         <div class="class-head-actions" onclick="event.stopPropagation()">
           <button class="icon-btn" onclick="editClass(${cls.id})">✎</button>
-          <button class="icon-btn danger" onclick="deleteClass(${cls.id})">✕</button>
+          <button class="icon-btn" onclick="deleteClass(${cls.id})" style="color:#d94040">✕</button>
         </div>
         <span class="chevron${isOpen?' open':''}">▶</span>
       </div>`;
     if(isOpen){
       html+=`<div class="contacts-body">`;
-      if(!contacts.length&&!q){
-        html+=`<div class="empty-row">Noch keine Kontakte in dieser Klasse</div>`;
-      }
+      if(!contacts.length&&!q) html+=`<div class="empty-row">Noch keine Kontakte</div>`;
       contacts.forEach(c=>{
         html+=`<div class="contact-row" onclick="openDetail(${c.id})">
           <div class="avatar" style="background:${p.bg};color:${p.text}">${ini(c.name)}</div>
-          <div class="contact-text">
-            <div class="c-name">${c.name}</div>
-            <div class="c-num">${c.number}</div>
-          </div>
+          <div class="contact-text"><div class="c-name">${c.name}</div><div class="c-num">${c.number}</div></div>
         </div>`;
       });
-      if(!q){
-        html+=`<div class="add-in-class" onclick="openAddContact(${cls.id})">＋ Kontakt hinzufügen</div>`;
-      }
+      if(!q) html+=`<div class="add-in-class" onclick="openAddContact(${cls.id})">＋ Kontakt hinzufügen</div>`;
       html+=`</div>`;
     }
     html+=`</div>`;
@@ -217,9 +182,7 @@ function openAddClass(){
     <div class="modal-sheet" onclick="event.stopPropagation()">
       <div class="modal-handle"></div>
       <div class="modal-title">Neue Klasse</div>
-      <div class="field"><label>Klassenname</label>
-        <input id="inp-cn" placeholder="z.B. 5A, 7C, 10B" />
-      </div>
+      <div class="field"><label>Klassenname</label><input id="inp-cn" placeholder="z.B. 5A, 7C, 10B"/></div>
       <div class="modal-actions">
         <button class="btn-full btn-cancel" onclick="closeModal()">Abbrechen</button>
         <button class="btn-full btn-confirm" onclick="saveClass(null)">Anlegen</button>
@@ -236,9 +199,7 @@ function editClass(id){
     <div class="modal-sheet" onclick="event.stopPropagation()">
       <div class="modal-handle"></div>
       <div class="modal-title">Klasse bearbeiten</div>
-      <div class="field"><label>Klassenname</label>
-        <input id="inp-cn" value="${c.name}" />
-      </div>
+      <div class="field"><label>Klassenname</label><input id="inp-cn" value="${c.name}"/></div>
       <div class="modal-actions">
         <button class="btn-full btn-cancel" onclick="closeModal()">Abbrechen</button>
         <button class="btn-full btn-confirm" onclick="saveClass(${id})">Speichern</button>
@@ -276,15 +237,9 @@ function openAddContact(preClass){
     <div class="modal-sheet" onclick="event.stopPropagation()">
       <div class="modal-handle"></div>
       <div class="modal-title">Neuer Kontakt</div>
-      <div class="field"><label>Name</label>
-        <input id="inp-n" placeholder="Vor- und Nachname" />
-      </div>
-      <div class="field"><label>Telefonnummer</label>
-        <input id="inp-p" placeholder="+49 151 ..." type="tel" />
-      </div>
-      <div class="field"><label>Klasse</label>
-        <select id="inp-cl">${classOptions(preClass||state.classes[0].id)}</select>
-      </div>
+      <div class="field"><label>Name</label><input id="inp-n" placeholder="Vor- und Nachname"/></div>
+      <div class="field"><label>Telefonnummer</label><input id="inp-p" placeholder="+49 151 ..." type="tel"/></div>
+      <div class="field"><label>Klasse</label><select id="inp-cl">${classOptions(preClass||state.classes[0].id)}</select></div>
       <div class="modal-actions">
         <button class="btn-full btn-cancel" onclick="closeModal()">Abbrechen</button>
         <button class="btn-full btn-confirm" onclick="saveContact(null)">Hinzufügen</button>
@@ -301,15 +256,9 @@ function editContact(id){
     <div class="modal-sheet" onclick="event.stopPropagation()">
       <div class="modal-handle"></div>
       <div class="modal-title">Kontakt bearbeiten</div>
-      <div class="field"><label>Name</label>
-        <input id="inp-n" value="${c.name}" />
-      </div>
-      <div class="field"><label>Telefonnummer</label>
-        <input id="inp-p" value="${c.number}" type="tel" />
-      </div>
-      <div class="field"><label>Klasse</label>
-        <select id="inp-cl">${classOptions(c.classId)}</select>
-      </div>
+      <div class="field"><label>Name</label><input id="inp-n" value="${c.name}"/></div>
+      <div class="field"><label>Telefonnummer</label><input id="inp-p" value="${c.number}" type="tel"/></div>
+      <div class="field"><label>Klasse</label><select id="inp-cl">${classOptions(c.classId)}</select></div>
       <div class="modal-actions">
         <button class="btn-full btn-cancel" onclick="closeModal()">Abbrechen</button>
         <button class="btn-full btn-confirm" onclick="saveContact(${id})">Speichern</button>
@@ -329,6 +278,107 @@ function saveContact(id){
   save();closeModal();render();
 }
 
+let importData=null;
+function openImport(){
+  importData=null;
+  document.getElementById('modalContainer').innerHTML=`
+  <div class="modal-overlay" onclick="closeModal()">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Excel importieren</div>
+      <div class="modal-sub">Spalten: Name · Telefonnummer · Klasse</div>
+      <div class="file-drop">
+        <input type="file" accept=".xlsx,.xls,.csv" onchange="handleFile(this.files[0])"/>
+        <div class="fd-icon">📂</div>
+        <div class="fd-text">Datei auswählen oder hierher ziehen</div>
+        <div class="fd-sub">.xlsx · .xls · .csv</div>
+      </div>
+      <div id="importPreviewArea"></div>
+      <div class="modal-actions">
+        <button class="btn-full btn-cancel" onclick="closeModal()">Abbrechen</button>
+        <button class="btn-full btn-green" id="btnDoImport" disabled onclick="doImport()">Importieren</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function handleFile(file){
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    let rows=[];
+    try{
+      if(file.name.endsWith('.csv')){
+        rows=e.target.result.split('\n').map(r=>r.split(/[,;]/).map(c=>c.trim().replace(/^"|"$/g,'')));
+      } else {
+        const wb=XLSX.read(e.target.result,{type:'array'});
+        const ws=wb.Sheets[wb.SheetNames[0]];
+        rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+      }
+      parseImport(rows);
+    }catch(err){
+      document.getElementById('importPreviewArea').innerHTML=
+        `<div style="margin-top:12px;padding:12px;background:#ffebee;border-radius:10px;font-size:13px;color:#c62828">Fehler beim Lesen der Datei.</div>`;
+    }
+  };
+  if(file.name.endsWith('.csv')) reader.readAsText(file,'UTF-8');
+  else reader.readAsArrayBuffer(file);
+}
+
+function parseImport(rows){
+  if(!rows||rows.length<2){
+    document.getElementById('importPreviewArea').innerHTML=
+      `<div style="margin-top:12px;padding:12px;background:#ffebee;border-radius:10px;font-size:13px;color:#c62828">Datei ist leer oder ungültig.</div>`;
+    return;
+  }
+  const dataRows=rows.slice(1).filter(r=>r.some(c=>String(c).trim()));
+  const parsed=[];
+  dataRows.forEach((r)=>{
+    const name=String(r[0]||'').trim();
+    const number=String(r[1]||'').trim();
+    const className=String(r[2]||'').trim();
+    if(!name&&!number) return;
+    if(name&&number) parsed.push({name,number,className});
+  });
+  importData=parsed;
+  const newClasses=[...new Set(parsed.map(p=>p.className).filter(Boolean))].filter(n=>!state.classes.find(c=>c.name===n));
+  let html=`<div class="import-stats">
+    <span class="stat-chip stat-ok">✓ ${parsed.length} Kontakte</span>
+    ${newClasses.length?`<span class="stat-chip stat-warn">+ ${newClasses.length} neue Klasse${newClasses.length!==1?'n':''}</span>`:''}
+  </div>
+  <div class="import-preview">
+    <div class="preview-row header">
+      <div class="preview-cell">Name</div><div class="preview-cell">Nummer</div><div class="preview-cell">Klasse</div>
+    </div>`;
+  parsed.slice(0,6).forEach(p=>{
+    html+=`<div class="preview-row"><div class="preview-cell">${p.name}</div><div class="preview-cell">${p.number}</div><div class="preview-cell">${p.className||'–'}</div></div>`;
+  });
+  if(parsed.length>6) html+=`<div class="preview-row"><div class="preview-cell" style="color:var(--ink3)">... und ${parsed.length-6} weitere</div><div class="preview-cell"></div><div class="preview-cell"></div></div>`;
+  html+=`</div>`;
+  if(newClasses.length) html+=`<div style="margin-top:8px;font-size:12px;color:var(--ink3)">Neue Klassen: ${newClasses.join(', ')}</div>`;
+  document.getElementById('importPreviewArea').innerHTML=html;
+  document.getElementById('btnDoImport').disabled=parsed.length===0;
+}
+
+function doImport(){
+  if(!importData||!importData.length)return;
+  let added=0;
+  importData.forEach(({name,number,className})=>{
+    let cls=state.classes.find(c=>c.name===className);
+    if(!cls&&className){
+      const nid=Date.now()+Math.random();
+      cls={id:nid,name:className};
+      state.classes.push(cls);
+      state.open[nid]=true;
+    }
+    if(!cls){if(!state.classes.length)return;cls=state.classes[0];}
+    state.contacts.push({id:Date.now()+Math.random(),name,number,classId:cls.id});
+    added++;
+  });
+  save();closeModal();render();
+  setTimeout(()=>alert(`✓ ${added} Kontakte importiert!`),200);
+}
+
 function openDetail(id){
   const c=state.contacts.find(x=>x.id===id);
   const ci=state.classes.findIndex(x=>x.id===c.classId);
@@ -343,15 +393,9 @@ function openDetail(id){
       <div class="detail-num">${c.number}</div>
       <div class="detail-class-tag">Klasse ${cls?cls.name:'–'}</div>
       <div class="call-actions">
-        <button class="call-btn" onclick="location.href='tel:${c.number.replace(/\s/g,'')}' ">
-          <span class="cb-icon">📞</span>Anrufen
-        </button>
-        <button class="call-btn" onclick="location.href='sms:${c.number.replace(/\s/g,'')}' ">
-          <span class="cb-icon">💬</span>SMS
-        </button>
-        <button class="call-btn" onclick="closeModal();editContact(${c.id})">
-          <span class="cb-icon">✎</span>Bearbeiten
-        </button>
+        <button class="call-btn" onclick="location.href='tel:${c.number.replace(/\s/g,'')}' "><span class="cb-icon">📞</span>Anrufen</button>
+        <button class="call-btn" onclick="location.href='sms:${c.number.replace(/\s/g,'')}' "><span class="cb-icon">💬</span>SMS</button>
+        <button class="call-btn" onclick="closeModal();editContact(${c.id})"><span class="cb-icon">✎</span>Bearbeiten</button>
       </div>
       <div class="divider"></div>
       <button class="delete-row" onclick="deleteContact(${c.id})">Kontakt löschen</button>
