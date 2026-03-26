@@ -32,6 +32,7 @@ body{background:var(--surface2);font-family:'DM Sans',sans-serif;color:var(--ink
 .btn-outline{background:var(--surface);border:1.5px solid var(--border);color:var(--ink2)}
 .btn-solid{background:var(--ink);color:#fff}
 .btn-import{background:#e8f5e9;border:1.5px solid #a5d6a7;color:#2e7d32}
+
 .class-card{background:var(--surface);border-radius:var(--radius);border:1.5px solid var(--border);margin-bottom:12px;overflow:hidden}
 .class-head{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;user-select:none;-webkit-user-select:none}
 .class-color-bar{width:4px;height:38px;border-radius:4px;flex-shrink:0}
@@ -42,28 +43,32 @@ body{background:var(--surface2);font-family:'DM Sans',sans-serif;color:var(--ink
 .icon-btn{width:32px;height:32px;border-radius:8px;border:none;background:transparent;color:var(--ink3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;font-family:'DM Sans',sans-serif;-webkit-appearance:none}
 .chevron{font-size:11px;color:var(--ink3);margin-left:4px;transition:transform .2s;display:inline-block}
 .chevron.open{transform:rotate(90deg)}
+
 .contacts-body{border-top:1.5px solid var(--border);padding:6px 8px 8px}
 .contact-row{display:flex;align-items:center;gap:10px;padding:10px 8px;border-radius:10px;cursor:pointer}
+.contact-row:active{background:var(--surface2)}
 .avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;letter-spacing:0.5px}
 .contact-text{flex:1;min-width:0}
 .c-name{font-size:14px;font-weight:500;color:var(--ink)}
 .c-num{font-size:12px;color:var(--ink3);font-family:'DM Mono',monospace;margin-top:2px}
+.c-email{font-size:12px;color:var(--ink3);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .empty-row{padding:14px 8px;font-size:13px;color:var(--ink3);text-align:center}
 .add-in-class{display:flex;align-items:center;gap:8px;padding:10px 8px;border-radius:10px;cursor:pointer;color:var(--ink3);font-size:13px;font-weight:500;border:1.5px dashed var(--border);margin:4px 0 2px}
+
 .empty-state{text-align:center;padding:4rem 1rem;color:var(--ink3)}
 .empty-state .e-icon{font-size:40px;margin-bottom:14px}
 .empty-state p{font-size:14px;line-height:1.7}
+
 .import-preview{margin-top:12px;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;max-height:200px;overflow-y:auto}
-.preview-row{display:flex;border-bottom:1px solid var(--border);font-size:13px}
+.preview-row{display:flex;border-bottom:1px solid var(--border);font-size:12px}
 .preview-row:last-child{border-bottom:none}
 .preview-row.header{background:var(--surface2);font-weight:500}
-.preview-cell{flex:1;padding:7px 10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink2)}
-.preview-cell:first-child{flex:1.5}
+.preview-cell{flex:1;padding:7px 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink2)}
 .import-stats{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 .stat-chip{padding:5px 12px;border-radius:100px;font-size:12px;font-weight:500}
 .stat-ok{background:#e8f5e9;color:#2e7d32}
 .stat-warn{background:#fff3e0;color:#e65100}
-.stat-err{background:#ffebee;color:#c62828}
+
 .modal-overlay{position:fixed;inset:0;background:rgba(15,15,15,0.5);display:flex;align-items:flex-end;justify-content:center;z-index:200}
 .modal-sheet{background:var(--surface);border-radius:22px 22px 0 0;padding:1.5rem 1.25rem calc(1.5rem + var(--safe-bottom));width:100%;max-width:480px;animation:slideUp .22s cubic-bezier(.4,0,.2,1);max-height:92dvh;overflow-y:auto}
 .detail-sheet{background:var(--surface);border-radius:22px 22px 0 0;padding:2rem 1.25rem calc(2rem + var(--safe-bottom));width:100%;max-width:480px;animation:slideUp .22s cubic-bezier(.4,0,.2,1)}
@@ -86,15 +91,37 @@ body{background:var(--surface2);font-family:'DM Sans',sans-serif;color:var(--ink
 .btn-cancel{background:var(--surface3);color:var(--ink2)}
 .btn-green{background:#2e7d32;color:#fff}
 .btn-green:disabled{background:#a5d6a7;cursor:not-allowed}
+
+/* DETAIL SHEET */
 .detail-avatar-lg{width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;margin:0 auto 12px;letter-spacing:1px}
 .detail-name{text-align:center;font-size:21px;font-weight:600;letter-spacing:-0.3px}
-.detail-num{text-align:center;font-size:14px;color:var(--ink3);font-family:'DM Mono',monospace;margin-top:5px}
 .detail-class-tag{background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:5px 14px;font-size:12px;font-weight:500;color:var(--ink2);margin:10px auto 0;display:table}
-.call-actions{display:flex;gap:10px;margin:1.5rem 0 1.25rem}
+
+/* CONTACT INFO ROWS */
+.info-block{margin-top:1.25rem;border:1.5px solid var(--border);border-radius:14px;overflow:hidden}
+.info-row{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border)}
+.info-row:last-child{border-bottom:none}
+.info-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.info-content{flex:1;min-width:0}
+.info-label{font-size:11px;color:var(--ink3);margin-bottom:1px}
+.info-value{font-size:14px;color:var(--ink);font-family:'DM Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.info-value.email-val{font-family:'DM Sans',sans-serif;font-size:14px}
+.info-actions{display:flex;gap:6px;flex-shrink:0}
+.action-chip{padding:5px 11px;border-radius:100px;border:1px solid var(--border);background:var(--surface2);font-size:12px;font-weight:500;color:var(--ink2);cursor:pointer;font-family:'DM Sans',sans-serif;-webkit-appearance:none;white-space:nowrap}
+.action-chip:active{background:var(--surface3)}
+.action-chip.green{background:#e8f5e9;border-color:#a5d6a7;color:#2e7d32}
+.action-chip.blue{background:#e3f2fd;border-color:#90caf9;color:#1565c0}
+
+.call-actions{display:flex;gap:10px;margin:1.25rem 0 0}
 .call-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:15px 10px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;font-size:12px;color:var(--ink2);font-family:'DM Sans',sans-serif;-webkit-appearance:none}
+.call-btn:active{background:var(--surface3)}
 .call-btn .cb-icon{font-size:22px}
 .divider{border:none;border-top:1.5px solid var(--border);margin:.75rem 0}
 .delete-row{width:100%;padding:14px;background:transparent;color:#d94040;border:1.5px solid #f5c5c5;border-radius:12px;font-size:15px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;-webkit-appearance:none}
+
+/* TOAST */
+.toast{position:fixed;bottom:calc(2rem + var(--safe-bottom));left:50%;transform:translateX(-50%);background:#0f0f0f;color:#fff;padding:10px 20px;border-radius:100px;font-size:13px;font-weight:500;z-index:999;animation:toastIn .2s ease;pointer-events:none;white-space:nowrap}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 </style>
 </head>
 <body>
@@ -105,16 +132,17 @@ body{background:var(--surface2);font-family:'DM Sans',sans-serif;color:var(--ink
   </div>
   <div class="search-wrap">
     <span class="search-icon">⌕</span>
-    <input class="search-bar" id="searchInput" placeholder="Name oder Nummer suchen..." oninput="render()">
+    <input class="search-bar" id="searchInput" placeholder="Name, Nummer oder Email suchen..." oninput="render()">
   </div>
   <div class="action-bar">
     <button class="btn-pill btn-outline" onclick="openAddClass()">+ Klasse</button>
     <button class="btn-pill btn-solid" onclick="openAddContact(null)">+ Kontakt</button>
-    <button class="btn-pill btn-import" onclick="openImport()">↑ Excel importieren</button>
+    <button class="btn-pill btn-import" onclick="openImport()">↑ Excel</button>
   </div>
   <div id="mainContent"></div>
 </div>
 <div id="modalContainer"></div>
+
 <script>
 const PALETTE=[
   {bar:'#4A90D9',bg:'#EBF4FF',text:'#1a4d80'},
@@ -125,11 +153,27 @@ const PALETTE=[
   {bar:'#50C4C4',bg:'#E6FAFA',text:'#1a6666'},
   {bar:'#E06060',bg:'#FDEAEA',text:'#7a1a1a'},
 ];
-let state=JSON.parse(localStorage.getItem('kb3')||'null')||{classes:[],open:{},contacts:[]};
-function save(){localStorage.setItem('kb3',JSON.stringify(state))}
+let state=JSON.parse(localStorage.getItem('kb4')||'null')||{classes:[],open:{},contacts:[]};
+function save(){localStorage.setItem('kb4',JSON.stringify(state))}
 function pal(i){return PALETTE[i%PALETTE.length]}
 function ini(n){return n.split(' ').map(p=>p[0]).join('').toUpperCase().slice(0,2)}
 function closeModal(){document.getElementById('modalContainer').innerHTML=''}
+
+function showToast(msg){
+  const t=document.createElement('div');
+  t.className='toast';t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2000);
+}
+
+function copyEmail(email){
+  navigator.clipboard.writeText(email).then(()=>showToast('✓ Email kopiert')).catch(()=>{
+    const el=document.createElement('textarea');
+    el.value=email;document.body.appendChild(el);el.select();
+    document.execCommand('copy');el.remove();
+    showToast('✓ Email kopiert');
+  });
+}
 
 function render(){
   const q=document.getElementById('searchInput').value.toLowerCase().trim();
@@ -142,7 +186,11 @@ function render(){
   state.classes.forEach((cls,ci)=>{
     const p=pal(ci);
     let contacts=state.contacts.filter(c=>c.classId===cls.id);
-    if(q) contacts=contacts.filter(c=>c.name.toLowerCase().includes(q)||c.number.includes(q));
+    if(q) contacts=contacts.filter(c=>
+      c.name.toLowerCase().includes(q)||
+      c.number.includes(q)||
+      (c.email||'').toLowerCase().includes(q)
+    );
     const isOpen=state.open[cls.id]||q;
     html+=`<div class="class-card">
       <div class="class-head" onclick="toggleClass(${cls.id})">
@@ -163,7 +211,11 @@ function render(){
       contacts.forEach(c=>{
         html+=`<div class="contact-row" onclick="openDetail(${c.id})">
           <div class="avatar" style="background:${p.bg};color:${p.text}">${ini(c.name)}</div>
-          <div class="contact-text"><div class="c-name">${c.name}</div><div class="c-num">${c.number}</div></div>
+          <div class="contact-text">
+            <div class="c-name">${c.name}</div>
+            <div class="c-num">${c.number}</div>
+            ${c.email?`<div class="c-email">✉ ${c.email}</div>`:''}
+          </div>
         </div>`;
       });
       if(!q) html+=`<div class="add-in-class" onclick="openAddContact(${cls.id})">＋ Kontakt hinzufügen</div>`;
@@ -220,7 +272,7 @@ function saveClass(id){
 function deleteClass(id){
   const c=state.classes.find(x=>x.id===id);
   const n=state.contacts.filter(x=>x.classId===id).length;
-  if(!confirm(`Klasse "${c.name}"${n?` und ${n} Kontakte`:''}  löschen?`))return;
+  if(!confirm(`Klasse "${c.name}"${n?` und ${n} Kontakte`:''} löschen?`))return;
   state.classes=state.classes.filter(x=>x.id!==id);
   state.contacts=state.contacts.filter(x=>x.classId!==id);
   save();render();
@@ -239,6 +291,7 @@ function openAddContact(preClass){
       <div class="modal-title">Neuer Kontakt</div>
       <div class="field"><label>Name</label><input id="inp-n" placeholder="Vor- und Nachname"/></div>
       <div class="field"><label>Telefonnummer</label><input id="inp-p" placeholder="+49 151 ..." type="tel"/></div>
+      <div class="field"><label>Email (optional)</label><input id="inp-e" placeholder="name@schule.de" type="email"/></div>
       <div class="field"><label>Klasse</label><select id="inp-cl">${classOptions(preClass||state.classes[0].id)}</select></div>
       <div class="modal-actions">
         <button class="btn-full btn-cancel" onclick="closeModal()">Abbrechen</button>
@@ -258,6 +311,7 @@ function editContact(id){
       <div class="modal-title">Kontakt bearbeiten</div>
       <div class="field"><label>Name</label><input id="inp-n" value="${c.name}"/></div>
       <div class="field"><label>Telefonnummer</label><input id="inp-p" value="${c.number}" type="tel"/></div>
+      <div class="field"><label>Email (optional)</label><input id="inp-e" value="${c.email||''}" type="email"/></div>
       <div class="field"><label>Klasse</label><select id="inp-cl">${classOptions(c.classId)}</select></div>
       <div class="modal-actions">
         <button class="btn-full btn-cancel" onclick="closeModal()">Abbrechen</button>
@@ -271,13 +325,15 @@ function editContact(id){
 function saveContact(id){
   const name=document.getElementById('inp-n').value.trim();
   const number=document.getElementById('inp-p').value.trim();
+  const email=document.getElementById('inp-e').value.trim();
   const classId=parseInt(document.getElementById('inp-cl').value);
   if(!name||!number)return;
-  if(id){Object.assign(state.contacts.find(x=>x.id===id),{name,number,classId});}
-  else{state.contacts.push({id:Date.now(),name,number,classId});}
+  if(id){Object.assign(state.contacts.find(x=>x.id===id),{name,number,email,classId});}
+  else{state.contacts.push({id:Date.now(),name,number,email,classId});}
   save();closeModal();render();
 }
 
+// ── IMPORT ──────────────────────────────────────────────────────
 let importData=null;
 function openImport(){
   importData=null;
@@ -286,11 +342,11 @@ function openImport(){
     <div class="modal-sheet" onclick="event.stopPropagation()">
       <div class="modal-handle"></div>
       <div class="modal-title">Excel importieren</div>
-      <div class="modal-sub">Spalten: Name · Telefonnummer · Klasse</div>
+      <div class="modal-sub">Spalten: Name · Telefonnummer · Klasse · Email (optional)</div>
       <div class="file-drop">
         <input type="file" accept=".xlsx,.xls,.csv" onchange="handleFile(this.files[0])"/>
         <div class="fd-icon">📂</div>
-        <div class="fd-text">Datei auswählen oder hierher ziehen</div>
+        <div class="fd-text">Datei auswählen</div>
         <div class="fd-sub">.xlsx · .xls · .csv</div>
       </div>
       <div id="importPreviewArea"></div>
@@ -306,8 +362,8 @@ function handleFile(file){
   if(!file)return;
   const reader=new FileReader();
   reader.onload=e=>{
-    let rows=[];
     try{
+      let rows=[];
       if(file.name.endsWith('.csv')){
         rows=e.target.result.split('\n').map(r=>r.split(/[,;]/).map(c=>c.trim().replace(/^"|"$/g,'')));
       } else {
@@ -326,34 +382,40 @@ function handleFile(file){
 }
 
 function parseImport(rows){
-  if(!rows||rows.length<2){
-    document.getElementById('importPreviewArea').innerHTML=
-      `<div style="margin-top:12px;padding:12px;background:#ffebee;border-radius:10px;font-size:13px;color:#c62828">Datei ist leer oder ungültig.</div>`;
-    return;
-  }
+  if(!rows||rows.length<2) return;
   const dataRows=rows.slice(1).filter(r=>r.some(c=>String(c).trim()));
   const parsed=[];
-  dataRows.forEach((r)=>{
+  dataRows.forEach(r=>{
     const name=String(r[0]||'').trim();
     const number=String(r[1]||'').trim();
     const className=String(r[2]||'').trim();
-    if(!name&&!number) return;
-    if(name&&number) parsed.push({name,number,className});
+    const email=String(r[3]||'').trim();
+    if(name&&number) parsed.push({name,number,className,email});
   });
   importData=parsed;
   const newClasses=[...new Set(parsed.map(p=>p.className).filter(Boolean))].filter(n=>!state.classes.find(c=>c.name===n));
+  const withEmail=parsed.filter(p=>p.email).length;
   let html=`<div class="import-stats">
     <span class="stat-chip stat-ok">✓ ${parsed.length} Kontakte</span>
+    ${withEmail?`<span class="stat-chip stat-ok">✉ ${withEmail} mit Email</span>`:''}
     ${newClasses.length?`<span class="stat-chip stat-warn">+ ${newClasses.length} neue Klasse${newClasses.length!==1?'n':''}</span>`:''}
   </div>
   <div class="import-preview">
     <div class="preview-row header">
-      <div class="preview-cell">Name</div><div class="preview-cell">Nummer</div><div class="preview-cell">Klasse</div>
+      <div class="preview-cell">Name</div>
+      <div class="preview-cell">Nummer</div>
+      <div class="preview-cell">Klasse</div>
+      <div class="preview-cell">Email</div>
     </div>`;
-  parsed.slice(0,6).forEach(p=>{
-    html+=`<div class="preview-row"><div class="preview-cell">${p.name}</div><div class="preview-cell">${p.number}</div><div class="preview-cell">${p.className||'–'}</div></div>`;
+  parsed.slice(0,5).forEach(p=>{
+    html+=`<div class="preview-row">
+      <div class="preview-cell">${p.name}</div>
+      <div class="preview-cell">${p.number}</div>
+      <div class="preview-cell">${p.className||'–'}</div>
+      <div class="preview-cell">${p.email||'–'}</div>
+    </div>`;
   });
-  if(parsed.length>6) html+=`<div class="preview-row"><div class="preview-cell" style="color:var(--ink3)">... und ${parsed.length-6} weitere</div><div class="preview-cell"></div><div class="preview-cell"></div></div>`;
+  if(parsed.length>5) html+=`<div class="preview-row"><div class="preview-cell" style="color:var(--ink3)">... und ${parsed.length-5} weitere</div><div class="preview-cell"></div><div class="preview-cell"></div><div class="preview-cell"></div></div>`;
   html+=`</div>`;
   if(newClasses.length) html+=`<div style="margin-top:8px;font-size:12px;color:var(--ink3)">Neue Klassen: ${newClasses.join(', ')}</div>`;
   document.getElementById('importPreviewArea').innerHTML=html;
@@ -363,7 +425,7 @@ function parseImport(rows){
 function doImport(){
   if(!importData||!importData.length)return;
   let added=0;
-  importData.forEach(({name,number,className})=>{
+  importData.forEach(({name,number,className,email})=>{
     let cls=state.classes.find(c=>c.name===className);
     if(!cls&&className){
       const nid=Date.now()+Math.random();
@@ -372,30 +434,59 @@ function doImport(){
       state.open[nid]=true;
     }
     if(!cls){if(!state.classes.length)return;cls=state.classes[0];}
-    state.contacts.push({id:Date.now()+Math.random(),name,number,classId:cls.id});
+    state.contacts.push({id:Date.now()+Math.random(),name,number,email:email||'',classId:cls.id});
     added++;
   });
   save();closeModal();render();
-  setTimeout(()=>alert(`✓ ${added} Kontakte importiert!`),200);
+  setTimeout(()=>showToast(`✓ ${added} Kontakte importiert`),200);
 }
 
+// ── DETAIL ──────────────────────────────────────────────────────
 function openDetail(id){
   const c=state.contacts.find(x=>x.id===id);
   const ci=state.classes.findIndex(x=>x.id===c.classId);
   const p=pal(ci);
   const cls=state.classes[ci];
+  const emailRow = c.email ? `
+    <div class="info-row">
+      <div class="info-icon">✉</div>
+      <div class="info-content">
+        <div class="info-label">Email</div>
+        <div class="info-value email-val">${c.email}</div>
+      </div>
+      <div class="info-actions">
+        <button class="action-chip blue" onclick="copyEmail('${c.email}')">Kopieren</button>
+        <button class="action-chip" onclick="location.href='mailto:${c.email}'">Mail</button>
+      </div>
+    </div>` : '';
+
   document.getElementById('modalContainer').innerHTML=`
   <div class="modal-overlay" onclick="closeModal()">
     <div class="detail-sheet" onclick="event.stopPropagation()">
       <div class="modal-handle"></div>
       <div class="detail-avatar-lg" style="background:${p.bg};color:${p.text}">${ini(c.name)}</div>
       <div class="detail-name">${c.name}</div>
-      <div class="detail-num">${c.number}</div>
       <div class="detail-class-tag">Klasse ${cls?cls.name:'–'}</div>
+
+      <div class="info-block">
+        <div class="info-row">
+          <div class="info-icon">📞</div>
+          <div class="info-content">
+            <div class="info-label">Telefon</div>
+            <div class="info-value">${c.number}</div>
+          </div>
+          <div class="info-actions">
+            <button class="action-chip green" onclick="location.href='tel:${c.number.replace(/\s/g,'')}' ">Anrufen</button>
+            <button class="action-chip" onclick="location.href='sms:${c.number.replace(/\s/g,'')}' ">SMS</button>
+          </div>
+        </div>
+        ${emailRow}
+      </div>
+
       <div class="call-actions">
-        <button class="call-btn" onclick="location.href='tel:${c.number.replace(/\s/g,'')}' "><span class="cb-icon">📞</span>Anrufen</button>
-        <button class="call-btn" onclick="location.href='sms:${c.number.replace(/\s/g,'')}' "><span class="cb-icon">💬</span>SMS</button>
-        <button class="call-btn" onclick="closeModal();editContact(${c.id})"><span class="cb-icon">✎</span>Bearbeiten</button>
+        <button class="call-btn" onclick="closeModal();editContact(${c.id})">
+          <span class="cb-icon">✎</span>Bearbeiten
+        </button>
       </div>
       <div class="divider"></div>
       <button class="delete-row" onclick="deleteContact(${c.id})">Kontakt löschen</button>
