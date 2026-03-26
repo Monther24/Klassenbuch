@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Klassenbuch">
+<meta name="theme-color" content="#f5f4f1">
+<title>Klassenbuch</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0f0f0f;--ink2:#5a5a5a;--ink3:#a0a0a0;
+  --surface:#ffffff;--surface2:#f5f4f1;--surface3:#eeede9;
+  --border:#e0deda;--radius:14px;
+  --safe-top:env(safe-area-inset-top);--safe-bottom:env(safe-area-inset-bottom);
+}
+body{background:var(--surface2);font-family:'DM Sans',sans-serif;color:var(--ink);min-height:100dvh;-webkit-tap-highlight-color:transparent}
+#app{max-width:480px;margin:0 auto;padding:calc(1.5rem + var(--safe-top)) 1rem calc(5rem + var(--safe-bottom))}
+.app-header{margin-bottom:1.5rem}
+.app-title{font-size:28px;font-weight:600;letter-spacing:-0.5px}
+.app-sub{font-size:13px;color:var(--ink3);margin-top:3px}
+.search-wrap{position:relative;margin-bottom:1rem}
+.search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--ink3);font-size:16px;pointer-events:none}
+.search-bar{width:100%;padding:12px 12px 12px 38px;border:1.5px solid var(--border);border-radius:12px;font-size:15px;font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink);outline:none;-webkit-appearance:none}
+.search-bar::placeholder{color:var(--ink3)}
+.action-bar{display:flex;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap}
+.btn-pill{display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:100px;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;-webkit-appearance:none;white-space:nowrap}
+.btn-outline{background:var(--surface);border:1.5px solid var(--border);color:var(--ink2)}
+.btn-solid{background:var(--ink);color:#fff}
+.btn-import{background:#e8f5e9;border:1.5px solid #a5d6a7;color:#2e7d32}
+
+.class-card{background:var(--surface);border-radius:var(--radius);border:1.5px solid var(--border);margin-bottom:12px;overflow:hidden}
+.class-head{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.class-color-bar{width:4px;height:38px;border-radius:4px;flex-shrink:0}
+.class-head-info{flex:1}
+.class-name{font-size:16px;font-weight:600;letter-spacing:-0.2px}
+.class-meta{font-size:12px;color:var(--ink3);margin-top:2px}
+.class-head-actions{display:flex;align-items:center;gap:4px}
+.icon-btn{width:32px;height:32px;border-radius:8px;border:none;background:transparent;color:var(--ink3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;font-family:'DM Sans',sans-serif;-webkit-appearance:none}
+.chevron{font-size:11px;color:var(--ink3);margin-left:4px;transition:transform .2s;display:inline-block}
+.chevron.open{transform:rotate(90deg)}
+
+.contacts-body{border-top:1.5px solid var(--border);padding:6px 8px 8px}
+.contact-row{display:flex;align-items:center;gap:10px;padding:10px 8px;border-radius:10px;cursor:pointer}
+.contact-row:active{background:var(--surface2)}
+.avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;letter-spacing:0.5px}
+.contact-text{flex:1;min-width:0}
+.c-name{font-size:14px;font-weight:500;color:var(--ink)}
+.c-num{font-size:12px;color:var(--ink3);font-family:'DM Mono',monospace;margin-top:2px}
+.c-email{font-size:12px;color:var(--ink3);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.empty-row{padding:14px 8px;font-size:13px;color:var(--ink3);text-align:center}
+.add-in-class{display:flex;align-items:center;gap:8px;padding:10px 8px;border-radius:10px;cursor:pointer;color:var(--ink3);font-size:13px;font-weight:500;border:1.5px dashed var(--border);margin:4px 0 2px}
+
+.empty-state{text-align:center;padding:4rem 1rem;color:var(--ink3)}
+.empty-state .e-icon{font-size:40px;margin-bottom:14px}
+.empty-state p{font-size:14px;line-height:1.7}
+
+.import-preview{margin-top:12px;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;max-height:200px;overflow-y:auto}
+.preview-row{display:flex;border-bottom:1px solid var(--border);font-size:12px}
+.preview-row:last-child{border-bottom:none}
+.preview-row.header{background:var(--surface2);font-weight:500}
+.preview-cell{flex:1;padding:7px 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink2)}
+.import-stats{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.stat-chip{padding:5px 12px;border-radius:100px;font-size:12px;font-weight:500}
+.stat-ok{background:#e8f5e9;color:#2e7d32}
+.stat-warn{background:#fff3e0;color:#e65100}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(15,15,15,0.5);display:flex;align-items:flex-end;justify-content:center;z-index:200}
+.modal-sheet{background:var(--surface);border-radius:22px 22px 0 0;padding:1.5rem 1.25rem calc(1.5rem + var(--safe-bottom));width:100%;max-width:480px;animation:slideUp .22s cubic-bezier(.4,0,.2,1);max-height:92dvh;overflow-y:auto}
+.detail-sheet{background:var(--surface);border-radius:22px 22px 0 0;padding:2rem 1.25rem calc(2rem + var(--safe-bottom));width:100%;max-width:480px;animation:slideUp .22s cubic-bezier(.4,0,.2,1)}
+@keyframes slideUp{from{transform:translateY(50px);opacity:0}to{transform:none;opacity:1}}
+.modal-handle{width:36px;height:4px;background:var(--border);border-radius:4px;margin:0 auto 1.25rem}
+.modal-title{font-size:18px;font-weight:600;margin-bottom:4px;letter-spacing:-0.3px}
+.modal-sub{font-size:13px;color:var(--ink3);margin-bottom:1.25rem}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;color:var(--ink2);margin-bottom:5px;font-weight:500}
+.field input,.field select{width:100%;padding:13px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:16px;font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink);outline:none;-webkit-appearance:none}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a0a0a0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+.file-drop{border:2px dashed var(--border);border-radius:12px;padding:2rem 1rem;text-align:center;cursor:pointer;position:relative}
+.file-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.file-drop .fd-icon{font-size:28px;margin-bottom:8px}
+.file-drop .fd-text{font-size:14px;color:var(--ink2);font-weight:500}
+.file-drop .fd-sub{font-size:12px;color:var(--ink3);margin-top:4px}
+.modal-actions{display:flex;gap:8px;margin-top:1.25rem}
+.btn-full{flex:1;padding:14px;border-radius:12px;font-size:16px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;-webkit-appearance:none}
+.btn-confirm{background:var(--ink);color:#fff}
+.btn-cancel{background:var(--surface3);color:var(--ink2)}
+.btn-green{background:#2e7d32;color:#fff}
+.btn-green:disabled{background:#a5d6a7;cursor:not-allowed}
+
+/* DETAIL SHEET */
+.detail-avatar-lg{width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;margin:0 auto 12px;letter-spacing:1px}
+.detail-name{text-align:center;font-size:21px;font-weight:600;letter-spacing:-0.3px}
+.detail-class-tag{background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:5px 14px;font-size:12px;font-weight:500;color:var(--ink2);margin:10px auto 0;display:table}
+
+/* CONTACT INFO ROWS */
+.info-block{margin-top:1.25rem;border:1.5px solid var(--border);border-radius:14px;overflow:hidden}
+.info-row{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border)}
+.info-row:last-child{border-bottom:none}
+.info-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.info-content{flex:1;min-width:0}
+.info-label{font-size:11px;color:var(--ink3);margin-bottom:1px}
+.info-value{font-size:14px;color:var(--ink);font-family:'DM Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.info-value.email-val{font-family:'DM Sans',sans-serif;font-size:14px}
+.info-actions{display:flex;gap:6px;flex-shrink:0}
+.action-chip{padding:5px 11px;border-radius:100px;border:1px solid var(--border);background:var(--surface2);font-size:12px;font-weight:500;color:var(--ink2);cursor:pointer;font-family:'DM Sans',sans-serif;-webkit-appearance:none;white-space:nowrap}
+.action-chip:active{background:var(--surface3)}
+.action-chip.green{background:#e8f5e9;border-color:#a5d6a7;color:#2e7d32}
+.action-chip.blue{background:#e3f2fd;border-color:#90caf9;color:#1565c0}
+
+.call-actions{display:flex;gap:10px;margin:1.25rem 0 0}
+.call-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:15px 10px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;font-size:12px;color:var(--ink2);font-family:'DM Sans',sans-serif;-webkit-appearance:none}
+.call-btn:active{background:var(--surface3)}
+.call-btn .cb-icon{font-size:22px}
+.divider{border:none;border-top:1.5px solid var(--border);margin:.75rem 0}
+.delete-row{width:100%;padding:14px;background:transparent;color:#d94040;border:1.5px solid #f5c5c5;border-radius:12px;font-size:15px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;-webkit-appearance:none}
+
+/* TOAST */
+.toast{position:fixed;bottom:calc(2rem + var(--safe-bottom));left:50%;transform:translateX(-50%);background:#0f0f0f;color:#fff;padding:10px 20px;border-radius:100px;font-size:13px;font-weight:500;z-index:999;animation:toastIn .2s ease;pointer-events:none;white-space:nowrap}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="app-header">
+    <div class="app-title">Klassenbuch</div>
+    <div class="app-sub" id="app-sub"></div>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input class="search-bar" id="searchInput" placeholder="Name, Nummer oder Email suchen..." oninput="render()">
+  </div>
+  <div class="action-bar">
+    <button class="btn-pill btn-outline" onclick="openAddClass()">+ Klasse</button>
+    <button class="btn-pill btn-solid" onclick="openAddContact(null)">+ Kontakt</button>
+    <button class="btn-pill btn-import" onclick="openImport()">↑ Excel</button>
+  </div>
+  <div id="mainContent"></div>
+</div>
+<div id="modalContainer"></div>
+
+<script>
+const PALETTE=[
+  {bar:'#4A90D9',bg:'#EBF4FF',text:'#1a4d80'},
+  {bar:'#48C78E',bg:'#EDFAF4',text:'#1a6644'},
+  {bar:'#F5A623',bg:'#FFF6E6',text:'#7a4f00'},
+  {bar:'#E05CA0',bg:'#FDE8F4',text:'#7a1c52'},
+  {bar:'#A06CD5',bg:'#F3EAFF',text:'#4a1e7a'},
+  {bar:'#50C4C4',bg:'#E6FAFA',text:'#1a6666'},
+  {bar:'#E06060',bg:'#FDEAEA',text:'#7a1a1a'},
+];
+let state=JSON.parse(localStorage.getItem('kb4')||'null')||{classes:[],open:{},contacts:[]};
+function save(){localStorage.setItem('kb4',JSON.stringify(state))}
+function pal(i){return PALETTE[i%PALETTE.length]}
+function ini(n){return n.split(' ').map(p=>p[0]).join('').toUpperCase().slice(0,2)}
+function closeModal(){document.getElementById('modalContainer').innerHTML=''}
+
+function showToast(msg){
+  const t=document.createElement('div');
+  t.className='toast';t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2000);
+}
+
+function copyEmail(email){
+  navigator.clipboard.writeText(email).then(()=>showToast('✓ Email kopiert')).catch(()=>{
+    const el=document.createElement('textarea');
+    el.value=email;document.body.appendChild(el);el.select();
+    document.execCommand('copy');el.remove();
+    showToast('✓ Email kopiert');
+  });
+}
+
+function render(){
+  const q=document.getElementById('searchInput').value.toLowerCase().trim();
+  document.getElementById('app-sub').textContent=`${state.classes.length} Klassen · ${state.contacts.length} Kontakte`;
+  if(!state.classes.length){
+    document.getElementById('mainContent').innerHTML=`<div class="empty-state"><div class="e-icon">📚</div><p>Noch keine Klassen.<br>Tippe <strong>+ Klasse</strong> oder importiere eine Excel-Datei.</p></div>`;
+    return;
+  }
+  let html='';
+  state.classes.forEach((cls,ci)=>{
+    const p=pal(ci);
+    let contacts=state.contacts.filter(c=>c.classId===cls.id);
+    if(q) contacts=contacts.filter(c=>
+      c.name.toLowerCase().includes(q)||
+      c.number.includes(q)||
+      (c.email||'').toLowerCase().includes(q)
+    );
+    const isOpen=state.open[cls.id]||q;
+    html+=`<div class="class-card">
+      <div class="class-head" onclick="toggleClass(${cls.id})">
+        <div class="class-color-bar" style="background:${p.bar}"></div>
+        <div class="class-head-info">
+          <div class="class-name">Klasse ${cls.name}</div>
+          <div class="class-meta">${contacts.length} Kontakt${contacts.length!==1?'e':''}</div>
+        </div>
+        <div class="class-head-actions" onclick="event.stopPropagation()">
+          <button class="icon-btn" onclick="editClass(${cls.id})">✎</button>
+          <button class="icon-btn" onclick="deleteClass(${cls.id})" style="color:#d94040">✕</button>
+        </div>
+        <span class="chevron${isOpen?' open':''}">▶</span>
+      </div>`;
+    if(isOpen){
+      html+=`<div class="contacts-body">`;
+      if(!contacts.length&&!q) html+=`<div class="empty-row">Noch keine Kontakte</div>`;
+      contacts.forEach(c=>{
+        html+=`<div class="contact-row" onclick="openDetail(${c.id})">
+          <div class="avatar" style="background:${p.bg};color:${p.text}">${ini(c.name)}</div>
+          <div class="contact-text">
+            <div class="c-name">${c.name}</div>
+            <div class="c-num">${c.number}</div>
+            ${c.email?`<div class="c-email">✉ ${c.email}</div>`:''}
+          </div>
+        </div>`;
+      });
+      if(!q) html+=`<div class="add-in-class" onclick="openAddContact(${cls.id})">＋ Kontakt hinzufügen</div>`;
+      html+=`</div>`;
+    }
+    html+=`</div>`;
+  });
+  document.getElementById('mainContent').innerHTML=html;
+}
+
+function toggleClass(id){state.open[id]=!state.open[id];save();render()}
+
+function openAddClass(){
+  document.getElementById('modalContainer').innerHTML=`
+  <div class="modal-overlay" onclick="closeModal()">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Neue Klasse</div>
+      <div class="field"><label>Klassenname</label><input id="inp-cn" placeholder="z.B. 5A, 7C, 10B"/></div>
+      <div class="modal-actions">
+        <button class="btn-full btn-cancel" onclick="closeModal()">Abbrechen</button>
+        <button class="btn-full btn-confirm" onclick="saveClass(null)">Anlegen</button>
+      </div>
+    </div>
+  </div>`;
+  setTimeout(()=>document.getElementById('inp-cn')?.focus(),100);
+}
+
+function editClass(id){
+  const c=state.classes.find(x=>x.id===id);
+  document.getElementById('modalContainer').innerHTML=`
+  <div class="modal-overlay" onclick="closeModal()">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Klasse bearbeiten</div>
+      <div class="field"><label>Klassenname</label><input id="inp-cn" value="${c.name}"/></div>
+      <div class="modal-actions">
+        <button class="btn-full btn-cancel" onclick="closeModal()">Abbrechen</button>
+        <button class="btn-full btn-confirm" onclick="saveClass(${id})">Speichern</button>
+      </div>
+    </div>
+  </div>`;
+  setTimeout(()=>document.getElementById('inp-cn')?.focus(),100);
+}
+
+function saveClass(id){
+  const name=document.getElementById('inp-cn').value.trim();
+  if(!name)return;
+  if(id){state.classes.find(x=>x.id===id).name=name;}
+  else{const nid=Date.now();state.classes.push({id:nid,name});state.open[nid]=true;}
+  save();closeModal();render();
+}
+
+function deleteClass(id){
+  const c=state.classes.find(x=>x.id===id);
+  const n=state.contacts.filter(x=>x.classId===id).length;
+  if(!confirm(`Klasse "${c.name}"${n?` und ${n} Kontakte`:''} löschen?`))return;
+  state.classes=state.classes.filter(x=>x.id!==id);
+  state.contacts=state.contacts.filter(x=>x.classId!==id);
+  save();render();
+}
+
+function classOptions(sel){
+  return state.classes.map(c=>`<option value="${c.id}"${c.id===sel?' selected':''}>${c.name}</option>`).join('');
+}
+
+function openAddContact(preClass){
+  if(!state.classes.length){alert('Bitte zuerst eine Klasse anlegen.');return;}
+  document.getElementById('modalContainer').innerHTML=`
+  <div class="modal-overlay" onclick="closeModal()">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Neuer Kontakt</div>
+      <div class="field"><label>Name</label><input id="inp-n" placeholder="Vor- und Nachname"/></div>
+      <div class="field"><label>Telefonnummer</label><input id="inp-p" placeholder="+49 151 ..." type="tel"/></div>
+      <div class="field"><label>Email (optional)</label><input id="inp-e" placeholder="name@schule.de" type="email"/></div>
+      <div class="field"><label>Klasse</label><select id="inp-cl">${classOptions(preClass||state.classes[0].id)}</select></div>
+      <div class="modal-actions">
+        <button class="btn-full btn-cancel" onclick="closeModal()">Abbrechen</button>
+        <button class="btn-full btn-confirm" onclick="saveContact(null)">Hinzufügen</button>
+      </div>
+    </div>
+  </div>`;
+  setTimeout(()=>document.getElementById('inp-n')?.focus(),100);
+}
+
+function editContact(id){
+  const c=state.contacts.find(x=>x.id===id);
+  document.getElementById('modalContainer').innerHTML=`
+  <div class="modal-overlay" onclick="closeModal()">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Kontakt bearbeiten</div>
+      <div class="field"><label>Name</label><input id="inp-n" value="${c.name}"/></div>
+      <div class="field"><label>Telefonnummer</label><input id="inp-p" value="${c.number}" type="tel"/></div>
+      <div class="field"><label>Email (optional)</label><input id="inp-e" value="${c.email||''}" type="email"/></div>
+      <div class="field"><label>Klasse</label><select id="inp-cl">${classOptions(c.classId)}</select></div>
+      <div class="modal-actions">
+        <button class="btn-full btn-cancel" onclick="closeModal()">Abbrechen</button>
+        <button class="btn-full btn-confirm" onclick="saveContact(${id})">Speichern</button>
+      </div>
+    </div>
+  </div>`;
+  setTimeout(()=>document.getElementById('inp-n')?.focus(),100);
+}
+
+function saveContact(id){
+  const name=document.getElementById('inp-n').value.trim();
+  const number=document.getElementById('inp-p').value.trim();
+  const email=document.getElementById('inp-e').value.trim();
+  const classId=parseInt(document.getElementById('inp-cl').value);
+  if(!name||!number)return;
+  if(id){Object.assign(state.contacts.find(x=>x.id===id),{name,number,email,classId});}
+  else{state.contacts.push({id:Date.now(),name,number,email,classId});}
+  save();closeModal();render();
+}
+
+// ── IMPORT ──────────────────────────────────────────────────────
+let importData=null;
+function openImport(){
+  importData=null;
+  document.getElementById('modalContainer').innerHTML=`
+  <div class="modal-overlay" onclick="closeModal()">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Excel importieren</div>
+      <div class="modal-sub">Spalten: Name · Telefonnummer · Klasse · Email (optional)</div>
+      <div class="file-drop">
+        <input type="file" accept=".xlsx,.xls,.csv" onchange="handleFile(this.files[0])"/>
+        <div class="fd-icon">📂</div>
+        <div class="fd-text">Datei auswählen</div>
+        <div class="fd-sub">.xlsx · .xls · .csv</div>
+      </div>
+      <div id="importPreviewArea"></div>
+      <div class="modal-actions">
+        <button class="btn-full btn-cancel" onclick="closeModal()">Abbrechen</button>
+        <button class="btn-full btn-green" id="btnDoImport" disabled onclick="doImport()">Importieren</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function handleFile(file){
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      let rows=[];
+      if(file.name.endsWith('.csv')){
+        rows=e.target.result.split('\n').map(r=>r.split(/[,;]/).map(c=>c.trim().replace(/^"|"$/g,'')));
+      } else {
+        const wb=XLSX.read(e.target.result,{type:'array'});
+        const ws=wb.Sheets[wb.SheetNames[0]];
+        rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+      }
+      parseImport(rows);
+    }catch(err){
+      document.getElementById('importPreviewArea').innerHTML=
+        `<div style="margin-top:12px;padding:12px;background:#ffebee;border-radius:10px;font-size:13px;color:#c62828">Fehler beim Lesen der Datei.</div>`;
+    }
+  };
+  if(file.name.endsWith('.csv')) reader.readAsText(file,'UTF-8');
+  else reader.readAsArrayBuffer(file);
+}
+
+function parseImport(rows){
+  if(!rows||rows.length<2) return;
+  const dataRows=rows.slice(1).filter(r=>r.some(c=>String(c).trim()));
+  const parsed=[];
+  dataRows.forEach(r=>{
+    const name=String(r[0]||'').trim();
+    const number=String(r[1]||'').trim();
+    const className=String(r[2]||'').trim();
+    const email=String(r[3]||'').trim();
+    if(name&&number) parsed.push({name,number,className,email});
+  });
+  importData=parsed;
+  const newClasses=[...new Set(parsed.map(p=>p.className).filter(Boolean))].filter(n=>!state.classes.find(c=>c.name===n));
+  const withEmail=parsed.filter(p=>p.email).length;
+  let html=`<div class="import-stats">
+    <span class="stat-chip stat-ok">✓ ${parsed.length} Kontakte</span>
+    ${withEmail?`<span class="stat-chip stat-ok">✉ ${withEmail} mit Email</span>`:''}
+    ${newClasses.length?`<span class="stat-chip stat-warn">+ ${newClasses.length} neue Klasse${newClasses.length!==1?'n':''}</span>`:''}
+  </div>
+  <div class="import-preview">
+    <div class="preview-row header">
+      <div class="preview-cell">Name</div>
+      <div class="preview-cell">Nummer</div>
+      <div class="preview-cell">Klasse</div>
+      <div class="preview-cell">Email</div>
+    </div>`;
+  parsed.slice(0,5).forEach(p=>{
+    html+=`<div class="preview-row">
+      <div class="preview-cell">${p.name}</div>
+      <div class="preview-cell">${p.number}</div>
+      <div class="preview-cell">${p.className||'–'}</div>
+      <div class="preview-cell">${p.email||'–'}</div>
+    </div>`;
+  });
+  if(parsed.length>5) html+=`<div class="preview-row"><div class="preview-cell" style="color:var(--ink3)">... und ${parsed.length-5} weitere</div><div class="preview-cell"></div><div class="preview-cell"></div><div class="preview-cell"></div></div>`;
+  html+=`</div>`;
+  if(newClasses.length) html+=`<div style="margin-top:8px;font-size:12px;color:var(--ink3)">Neue Klassen: ${newClasses.join(', ')}</div>`;
+  document.getElementById('importPreviewArea').innerHTML=html;
+  document.getElementById('btnDoImport').disabled=parsed.length===0;
+}
+
+function doImport(){
+  if(!importData||!importData.length)return;
+  let added=0;
+  importData.forEach(({name,number,className,email})=>{
+    let cls=state.classes.find(c=>c.name===className);
+    if(!cls&&className){
+      const nid=Date.now()+Math.random();
+      cls={id:nid,name:className};
+      state.classes.push(cls);
+      state.open[nid]=true;
+    }
+    if(!cls){if(!state.classes.length)return;cls=state.classes[0];}
+    state.contacts.push({id:Date.now()+Math.random(),name,number,email:email||'',classId:cls.id});
+    added++;
+  });
+  save();closeModal();render();
+  setTimeout(()=>showToast(`✓ ${added} Kontakte importiert`),200);
+}
+
+// ── DETAIL ──────────────────────────────────────────────────────
+function openDetail(id){
+  const c=state.contacts.find(x=>x.id===id);
+  const ci=state.classes.findIndex(x=>x.id===c.classId);
+  const p=pal(ci);
+  const cls=state.classes[ci];
+  const emailRow = c.email ? `
+    <div class="info-row">
+      <div class="info-icon">✉</div>
+      <div class="info-content">
+        <div class="info-label">Email</div>
+        <div class="info-value email-val">${c.email}</div>
+      </div>
+      <div class="info-actions">
+        <button class="action-chip blue" onclick="copyEmail('${c.email}')">Kopieren</button>
+        <button class="action-chip" onclick="location.href='mailto:${c.email}'">Mail</button>
+      </div>
+    </div>` : '';
+
+  document.getElementById('modalContainer').innerHTML=`
+  <div class="modal-overlay" onclick="closeModal()">
+    <div class="detail-sheet" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="detail-avatar-lg" style="background:${p.bg};color:${p.text}">${ini(c.name)}</div>
+      <div class="detail-name">${c.name}</div>
+      <div class="detail-class-tag">Klasse ${cls?cls.name:'–'}</div>
+
+      <div class="info-block">
+        <div class="info-row">
+          <div class="info-icon">📞</div>
+          <div class="info-content">
+            <div class="info-label">Telefon</div>
+            <div class="info-value">${c.number}</div>
+          </div>
+          <div class="info-actions">
+            <button class="action-chip green" onclick="location.href='tel:${c.number.replace(/\s/g,'')}' ">Anrufen</button>
+            <button class="action-chip" onclick="location.href='sms:${c.number.replace(/\s/g,'')}' ">SMS</button>
+          </div>
+        </div>
+        ${emailRow}
+      </div>
+
+      <div class="call-actions">
+        <button class="call-btn" onclick="closeModal();editContact(${c.id})">
+          <span class="cb-icon">✎</span>Bearbeiten
+        </button>
+      </div>
+      <div class="divider"></div>
+      <button class="delete-row" onclick="deleteContact(${c.id})">Kontakt löschen</button>
+    </div>
+  </div>`;
+}
+
+function deleteContact(id){
+  if(!confirm('Kontakt löschen?'))return;
+  state.contacts=state.contacts.filter(x=>x.id!==id);
+  save();closeModal();render();
+}
+
+render();
+</script>
+</body>
+</html>
